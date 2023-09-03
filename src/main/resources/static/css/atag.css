@@ -1,0 +1,165 @@
+@charset "UTF-8";
+a {
+	color: black;
+	text-decoration: none;
+}
+
+.navbar-brand:hover .fas {
+    color: green;
+ }
+ 
+ .navbar-nav li {
+  font-family: Arial, sans-serif; /* 글꼴 설정 */
+}
+
+.navbar-nav li a {
+	color:white;
+  padding: 5px 10px; /* 필요에 따라 패딩 조정 */
+  border-radius: 5px; /* 필요에 따라 테두리 둥글게 조정 */
+}
+.navbar-nav li a:hover {
+	color:green;
+}
+ 
+.navbar-toggler {
+   border: none;
+   outline: none;
+}
+ 
+ .unav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+}
+
+.unav li {
+  margin-bottom: 10px;
+}
+ 
+.upbtn {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 10vw; /* viewport의 너비에 따라 10% 크기로 조정 */
+  height: 10vw; /* viewport의 너비에 따라 10% 크기로 조정 */
+  background: #64CD3C;
+  overflow: auto;
+  position: fixed;
+  right: 3vw; /* viewport의 너비에 따라 3% 위치로 조정 */
+  bottom: 15vh; /* viewport의 높이에 따라 8% 위치로 조정 */
+  border: none;
+  border-radius: 50%;
+  font-size: 3vw; /* viewport의 너비에 따라 3% 크기로 조정 */
+}
+
+.upbtn:hover {
+  background-color: lightgray;
+}
+.fa-plus-circle {
+  color: green;
+}
+
+td {
+	border: none;
+}
+
+		.modal-content,
+		.modal-header,
+		.modal-body,
+		.modal-footer,
+		.input-group-text,
+		.form-control,
+		.form-select,
+		.input-group-text,
+		.input-group,
+		.textarea,
+		.input-group-text,
+		.input-group,
+		.input-group-text,
+		.form-control,
+		.form-control,
+		.form-control,
+		.form-control {
+			border: none;
+		}
+i {
+	color: darkgrey;
+}
+
+hr{
+	color: lightgray;
+}
+
+.scrolled {
+    background-color: #1c1f25;
+}
+@media (min-width: 992px) {
+  .msearch
+  {
+    display: none;
+  }
+}
+@media (max-width: 992px) {
+  #searchToggle
+  {
+    display: none;
+  }
+}
+
+    .vertical-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+
+.file-icon {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  background-color:white;
+  transform: translateX(90%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.file-icon i {
+  font-size: 30px;
+}
+
+.file-input {
+  position: relative;
+  z-index: 2;
+}
+
+#searchToggle {
+	color: #fff;
+	background-color: transparent;
+	border: none;
+}
+#searchToggle:hover {
+	transform: scale(1.2);
+	/* Increase the scale on hover (you can adjust the value as needed) */
+	transition: transform 0.3s ease; /* Add a smooth transition effect */
+}
+#searchFormWrapper {
+	position: fixed;
+	top: 60px; /* 네비게이션 바 아래에 위치하도록 조정 */
+	left: 50%; /* 가로 중앙에 위치하도록 조정 */
+	transform: translateX(-50%); /* 왼쪽으로 50% 이동하여 가로 중앙 정렬 */
+	width: 400px; /* 원하는 폭으로 설정 */
+	padding: 8px;
+	z-index: 999;
+	display: none; /* 기본적으로 숨겨진 상태 */
+}
+
+/* 네비게이션 바에서 검색 토글 버튼을 클릭했을 때 검색 폼을 보이도록 설정 */
+#searchFormWrapper.active {
+	display: flex;
+	align-items: center;
+}

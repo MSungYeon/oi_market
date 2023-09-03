@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>회원가입 🥒</title>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">	
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz"  crossorigin="anonymous">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>	
+	<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+	<script src="/resources/js/addressapi.js"></script>
+	
+	<link th:href="@{/css/atag.css}" rel="stylesheet"> <!-- a태그관련 스타일 -->
+	
+	<script> // 이미지 미리보기
+		  function handleFileUpload(event) {
+			    const file = event.target.files[0];
+			    const img = document.getElementById('preview');
+			    const previewText = document.getElementById('preview-text');
+
+			    if (file) {
+			      const reader = new FileReader();
+			      reader.onload = function() {
+			        img.src = reader.result;
+			        img.style.display = 'block';
+			        previewText.style.display = 'none';
+			      };
+			      reader.readAsDataURL(file);
+			    } else {
+			      img.src = '이미지 주소';
+			      img.style.display = 'none';
+			      previewText.style.display = 'block';
+			    }
+			  }
+	</script>
+</head>
+<body>
+	<div class="container" align="center">
+		<div class="mt-4 p-5 bg-success text-white rounded">
+			<h3>회원가입 🥒</h3>
+			<p>환영합니다. 회원 정보를 기입해주세요.</p>
+		</div>
+	</div>
+	<br />
+
+<!--  
+ 	<p th:text="${member.toString()}"></p>
+-->	
+	
+	<div class="container" align="center">
+			<form action="insertMember" method="post" enctype="multipart/form-data">
+				<div class="modal-content" align="center">				
+					<div class="modal-header bg-success text-white">
+						<h1 class="motal-title fs-5" id="staticBackdropLabel" >* 정보 입력란 *</h1>
+					</div> <!-- modal-header -->
+					
+					<div class="modal-body">
+						<div style="position: relative; display: inline-block;" class="input-group mb-3">
+						  <img id="preview" src="image/default_profile.png" style="width: 100px; height: 100px; border-radius: 50%;">
+						</div>
+						<div class="input-group mb-3">
+						  <label class="input-group-text" for="uploadFile"><i class="fas fa-file"></i></label>
+						  <input type="file" class="form-control" name="uploadFile" id="uploadFile" aria-describedby="uploadFile" aria-label="Upload" onchange="handleFileUpload(event)">
+						</div>
+
+						<div class="input-group mb-3">
+							<div class="input-group-text"><i class="fas fa-user"></i></div>
+							<input type="text" name="id" class="form-control" value="" required placeholder="아이디를 입력해주세요.">
+						</div>
+						
+						<div class="input-group mb-3">
+							<div class="input-group-text"><i class="fas fa-lock"></i></div>
+							<input type="password" name="password" class="form-control" value=""  required placeholder="비밀번호를 입력해주세요.">
+						</div>
+						
+						<div class="input-group mb-3">
+							<div class="input-group-text"><i class="fas fa-user"></i></div>
+							<input type="text" name="name" class="form-control" value="" required placeholder="이름을 입력해주세요.">
+						</div>		
+							
+						<div class="input-group mb-3">
+							<div class="input-group-text"><i class="fas fa-user"></i></div>
+							<input type="text" name="nickname" class="form-control" value="" required placeholder="닉네임을 입력해주세요.">
+						</div>		
+							
+						<div class="input-group mb-3">
+							<div class="input-group-text"><i class="fas fa-id-card"></i></div>
+							<input type="text" name="ssn" class="form-control" value="" required placeholder="주민번호를 입력해주세요.">
+						</div>		
+<div class="input-group mb-3">                   
+	<div class="input-group-text"><i class="fas fa-home"></i></div>
+	<input class="form-control" style="width: 40%; display: inline;" placeholder="우편번호" name="addr1" id="addr1" type="text" readonly="readonly" >
+	    <button type="button" class="btn btn-default" onclick="execPostCode();"><i class="fa fa-search"></i> 우편번호 찾기</button>                               
+							</div>		
+<div class="input-group mb-3"> 
+	<div class="input-group-text"><i class="fas fa-home"></i></div>
+	    <input class="form-control" placeholder="도로명 주소" name="addr2" id="addr2" type="text" readonly="readonly" />
+								</div>		
+<div class="input-group mb-3"> 
+	<div class="input-group-text"><i class="fas fa-home"></i></div>
+	    <input class="form-control" placeholder="상세주소" name="addr3" id="addr3" type="text"  />
+</div>
+						
+					</div> 
+ 				
+					<div class="modal-footer">
+					  <button type="submit" class="col-12 btn btn-success p-2" onclick="return confirm('가입하시겠습니까?')">회원가입</button>
+					  <a href="javascript:history.go(-1)" class="col-12 btn btn-warning p-2">로그인하러가기</a>
+					</div>
+				</div>
+			</form>	
+	</div>
+	<div class="container" align="center">
+	    <footer class="mt-4 p-5 bg-success text-white rounded">
+		  <div class="container foot_area box_inner">
+		    <ul class=" text-center list-inline foot_list clear">
+	          <li><a href="javascrip:;">이용약관</a></li>
+	          <li><a href="javascrip:;">개인정보취급방침</a></li>
+	        </ul>
+	       <p class="text-center addr">서울 종로구 인사동 익선동 11-99 
+	          <span class="gubun">/</span>
+	          <span class="br_line">대표전화 
+	            <span class="space0">02-1234-1234</span>
+	            <span class="gubun">/</span>
+	            <span class="br_line">E-mail : <span class="space0"> hong@gmail.com</span></span>
+	          </span>
+	        </p>
+			<p class="text-center copy box_inner">Copyright(c) TouristInTour all right reserved</p>
+	
+	<!-- 			<ul class="text-center list-inline snslink clear">
+				  <li><a href="javascript:;">blog</a></li>
+				  <li><a href="javascript:;">facebook</a></li>
+				  <li><a href="javascript:;">instagram</a></li>
+				</ul> -->
+	      </div>
+	    </footer>
+    </div>
+		<script>
+		function execPostCode() {
+	         new daum.Postcode({
+	             oncomplete: function(data) {
+	                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+	 
+	                // 도로명 주소의 노출 규칙에 따라 주소를 조합한다.
+	                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+	                var fullRoadAddr = data.roadAddress; // 도로명 주소 변수
+	                var extraRoadAddr = ''; // 도로명 조합형 주소 변수
+	 
+	                // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+	                // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+	                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+	                    extraRoadAddr += data.bname;
+	                }
+	                // 건물명이 있고, 공동주택일 경우 추가한다.
+	                if(data.buildingName !== '' && data.apartment === 'Y'){
+	                   extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+	                }
+	                // 도로명, 지번 조합형 주소가 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+	                if(extraRoadAddr !== ''){
+	                    extraRoadAddr = ' (' + extraRoadAddr + ')';
+	                }
+	                // 도로명, 지번 주소의 유무에 따라 해당 조합형 주소를 추가한다.
+	                if(fullRoadAddr !== ''){
+	                    fullRoadAddr += extraRoadAddr;
+	                }
+	 
+	                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+	                console.log(data.zonecode);
+	                console.log(fullRoadAddr);
+	                
+	                
+	             // 우편번호와 주소 정보를 해당 필드에 넣는다.
+document.getElementById('addr1').value = data.zonecode; // 5자리 새우편번호 사용
+document.getElementById('addr2').value = fullRoadAddr; // 정확한 변수명인 fullRoadAddr로 수정
+
+	                
+	                /* document.getElementById('signUpUserPostNo').value = data.zonecode; //5자리 새우편번호 사용
+	                document.getElementById('signUpUserCompanyAddress').value = fullRoadAddr;
+	                document.getElementById('signUpUserCompanyAddressDetail').value = data.jibunAddress; */
+	            }
+	         }).open();
+	     }
+</script>
+</body>
+</html>		

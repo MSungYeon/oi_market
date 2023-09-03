@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>오이마켓 🥒</title>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>	
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" 
+		integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" 
+		crossorigin="anonymous">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<link th:href="@{/css/atag.css}" rel="stylesheet"> <!-- a태그관련 스타일 -->
+</head>
+<body>
+	<div class="container" align="center">
+		<nav class="navbar navbar-dark fixed-top" id="navbar">
+		  <div class="container">
+		    <a class="navbar-brand" href="javascript:history.go(-1)"><i class="fas fa-chevron-left"></i></a>
+		    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getBoardList}" id="home">
+		      <i class="fas fa-home"></i>
+		    </a>
+		    <h5 class="m-0 navbar-brand"><font>프로필</font></h5>
+		    <ul class="navbar-nav ms-auto mb-lg-0">
+		      <li class="nav-item mx-3">
+		      </li>
+		    </ul>
+		  </div>
+		</nav>
+		<script>
+		  window.addEventListener("scroll", function() {
+		    var navbar = document.getElementById("navbar");
+		    if (window.scrollY > 0) {
+		      navbar.classList.add("scrolled");
+		    } else {
+		      navbar.classList.remove("scrolled");
+		    }
+		  });
+		</script>
+		<div class="container mt-5 mb-5 pt-3 pb-5" align="left">
+			<h5 class="m-0 navbar-brand">
+			<img th:src="@{/image/} + ${member.profile}" alt="사진" style="width: 50px; height: 50px; border-radius: 50%;">
+				<font th:text="|${session['member'].nickname}|"></font>
+				<i>#<font th:text="|${session['member'].id}|"></font></i>
+			</h5>	
+			<br />
+			<div class="container" align="center">
+				<a th:href="@{/updateMember(id=${member.id})}" class="btn btn-secondary d-grid">프로필 수정</a>
+			</div>
+			<br />
+			<h3>나의 거래</h3>
+			<div class="container" align="left">
+				<a th:href="@{/}" >❤관심목록</a><br /><br />
+				<a th:href="@{/sellBoardList}" >📃판매내역</a><br /><br />
+				<a th:href="@{/buyBoardList}" >🛒구매내역</a><br />
+			</div>
+			<hr />
+			<h3>나의 게시물</h3>
+			<div class="container" align="left">
+				<a th:href="@{/}" >❤관심 게시물</a><br /><br />
+				<a th:href="@{/myfBoardList}" >📄나의 게시물</a><br /><br />
+			</div>
+			<hr />
+			<h3>기타</h3>
+			<div class="container" align="left">
+				<a th:href="@{/}" ><i class="fas fa-map-marker-alt"></i> 내 동네설정</a><br /><br />
+				<a th:href="@{/}" ><i class="fas fa-crosshairs"></i> 동네 인증하기</a><br /><br />
+				<a th:href="@{/}" ><i class="fas fa-link"></i> 중고거래 카테고리 설정</a><br /><br />
+				<a th:href="@{/}" ><i class="fas fa-bell"></i> 알림 키워드 설정</a><br /><br />
+				<a th:href="@{/}" ><i class="fas fa-headset"></i> 자주 묻는 질문</a><br /><br />
+				<a th:href="@{/}" ><i class="fas fa-envelope"></i> 친구 초대</a><br /><br />
+			</div>
+			<hr />
+			<a href="logout" class="btn btn-danger d-grid" onclick="return confirm('로그아웃 하시겠습니까?')">로그아웃</a>
+		</div>
+		<footer>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
+			  <div class="container">
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getBoardList}" id="home">
+				  <i class="fas fa-home" ></i>
+				  <span>홈</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getfBoardList}" id="fboard">
+				  <i class="fas fa-list-alt"></i>
+				  <span>게시판</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/myGps}" id="gpspage">
+				  <i class="fas fa-map-marker-alt"></i>
+				  <span>내 위치</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/chat/room}" id="chat">
+				  <i class="fas fa-comments"></i>
+				  <span>채팅</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{#}" id="mypage">
+				  <i class="fas fa-user"  style="color: green;"></i>
+				  <span>나의 오이</span>
+				</a>
+			  </div>
+			</nav>
+		</footer>
+	</div>		
+</body>
+</html>		

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>환영합니다. 오이마켓 🥒 입니다.</title>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">	
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link th:href="@{/css/atag.css}" rel="stylesheet"> <!-- a태그관련 스타일 -->
+</head>
+<body>
+	<div class="container" align="center">
+		<div class="mt-4 p-5 bg-success text-white rounded">
+			<h1>오이마켓 🥒</h1>
+		</div>
+		<br>
+		
+		<form th:action="login" method="post" >
+		    <input type="text" class="col-12 input-group-text p-2" name="id" required placeholder="아이디를 입력해주세요."><br />
+		    <input type="password" class="col-12 input-group-text p-2" name="password" required placeholder="비밀번호를 입력해주세요."><br />
+		    <div class="modal-footer">
+			    <input type="submit" class="col-12 btn btn-success p-2" value="login">
+			    <a th:href="insertMember" class="col-12 btn btn-warning p-2">register</a>
+		    </div>
+		<div th:if="${loginError}" class="alert alert-danger" role="alert">
+		    <span th:text="${loginError}"></span>
+		</div>
+		</form>
+		
+	</div>
+
+	<div class="container" align="center">
+    <footer class="mt-4 p-5 bg-success text-white rounded">
+	  <div class="container foot_area box_inner">
+	    <ul class=" text-center list-inline foot_list clear">
+          <li><a href="javascrip:;">이용약관</a></li>
+          <li><a href="javascrip:;">개인정보취급방침</a></li>
+        </ul>
+       <p class="text-center addr">서울 종로구 인사동 익선동 11-99 
+          <span class="gubun">/</span>
+          <span class="br_line">대표전화 
+            <span class="space0">02-1234-1234</span>
+            <span class="gubun">/</span>
+            <span class="br_line">E-mail : <span class="space0"> hong@gmail.com</span></span>
+          </span>
+        </p>
+		<p class="text-center copy box_inner">Copyright(c) TouristInTour all right reserved</p>
+
+<!-- 			<ul class="text-center list-inline snslink clear">
+			  <li><a href="javascript:;">blog</a></li>
+			  <li><a href="javascript:;">facebook</a></li>
+			  <li><a href="javascript:;">instagram</a></li>
+			</ul> -->
+      </div>
+    </footer>
+    </div>
+</body>
+</html>		

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>오이마켓 🥒</title>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>	
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" 
+		integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" 
+		crossorigin="anonymous">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<link th:href="@{/css/atag.css}" rel="stylesheet"> <!-- a태그관련 스타일 -->
+	
+    <script> // 이미지 미리보기
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            const imgContainer = document.getElementById('preview-container');
+            const previewText = document.getElementById('preview-text');
+            imgContainer.innerHTML = '';
+
+            if (files && files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+                    reader.onload = function () {
+                        const img = document.createElement('img');
+                        img.src = reader.result;
+                        img.style.width = '100px';
+                        img.style.height = '100px';
+                        imgContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+                imgContainer.style.display = 'block';
+                previewText.style.display = 'none';
+            } else {
+                imgContainer.style.display = 'none';
+                previewText.style.display = 'block';
+            }
+        }
+    </script>
+</head>
+<body>
+	<div class="container" align="center">
+		<nav class="navbar navbar-dark bg-dark fixed-top" id="navbar">
+		  <div class="container">
+		    <a class="navbar-brand" href="javascript:history.go(-1)"><i class="fas fa-chevron-left"></i></a>
+		    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getBoardList}" id="home">
+		      <i class="fas fa-home"></i>
+		    </a>
+		    <ul class="navbar-nav ms-auto mb-lg-0">
+		      <li class="nav-item mx-3">
+		
+		      </li>
+		    </ul>
+		  </div>
+		</nav>
+	<div class="container mt-5 justify-content-center">
+		<form th:action="insertBoard"  method="post" enctype="multipart/form-data">
+			<input type="hidden" name="writer" class="form-control" th:value="${session.member.nickname}">	
+			<input type="hidden" name="proFile" class="form-control" id="proFile" th:value="${session.member.profile}" readonly>
+			<div class="modal-content">				
+				<div class="modal-header bg-success text-white" >
+					<h1 class="motal-title fs-5" id="staticBackdropLabel">상품등록하기</h1>
+				</div> <!-- modal-header -->
+				
+				<div class="modal-body">
+                    <div id="preview-container" style="display: none; position: relative; display: inline-block;"></div>
+                    <p id="preview-text" class="preview-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"><i class="fas fa-camera"></i></p>
+                    <br />
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="uploadFiles"><i class="fas fa-file"></i></label>
+                        <input type="file" class="form-control" name="upload" id="uploadFiles" aria-describedby="uploadFiles" aria-label="Upload" multiple onchange="handleFileUpload(event)">
+                    </div>
+					<div class="input-group mb-3">
+						<div class="input-group-text"><i class="fas fa-user"></i></div>
+						<input type="text" name="nickname" class="form-control" id="writer" th:value="${session.member.nickname}" readonly placeholder="작성자">
+					</div>
+
+					<div class="input-group mb-3">
+						<div class="input-group-text"><i class="fas fa-pen"></i></div>
+						<input type="text" name="title" class="form-control" id="title" required placeholder="제품명">
+					</div>
+
+					<div class="input-group mb-3">
+						<div class="input-group-text"><i class="fas fa-won-sign"></i></div>
+						<input type="number" name="price" class="form-control" id="price" required placeholder="₩가격">
+					</div>
+					
+					<div class="input-group mb-3">
+					  <span class="input-group-text"><i class="fas fa-clipboard"></i></span>
+					  <textarea class="form-control"  name="content" rows="10" placeholder="제품 설명"></textarea>
+					</div>
+					
+					<div class="input-group mb-3">
+					  <div class="input-group-text"><i class="fas fa-list"></i></div>
+					  <select name="cate" class="form-select" id="cate" required>
+					    <option value="">카테고리 선택</option>
+					    <option value="디지털기기">📱 디지털기기</option>
+					    <option value="생활가전">📺 생활가전</option>
+					    <option value="가구">🏠 가구</option>
+					    <option value="의류">👔 의류</option>
+					    <option value="미용">✂ 미용</option>
+					    <option value="스포츠">⚽ 스포츠</option>
+					  </select>
+					</div>
+					
+					<div class="input-group mb-3">
+					  <div class="input-group-text"><i class="fas fa-globe"></i></div>
+					  <input type="text" name="addr" class="form-control" id="addr" th:value="${session.member.addr2}" readonly placeholder="거래지역">
+					</div>
+				</div> 
+				
+				<div class="modal-footer mb-5 pb-5">
+				    <input type="submit" class="btn btn-success" onclick="return confirm('상품을 등록하시겠습니까?')" value=" 판매등록 " />
+				    <a th:href="@{/getBoardList}" class="btn btn-success">판매목록가기</a>					
+				</div> 
+			</div> 
+		</form>	
+	</div>	
+		<footer>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
+			  <div class="container">
+			    <a class="navbar-brand d-flex flex-column align-items-center" href="#" id="home">
+				  <i class="fas fa-home" style="color: green;"></i>
+				  <span>홈</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getfBoardList}" id="fboard">
+				  <i class="fas fa-list-alt"></i>
+				  <span>게시판</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{#}" id="gpspage">
+				  <i class="fas fa-map-marker-alt"></i>
+				  <span>내 위치</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/chat/room}" id="chat">
+				  <i class="fas fa-comments"></i>
+				  <span>채팅</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/myPage}" id="mypage">
+				  <i class="fas fa-user"></i>
+				  <span>나의 오이</span>
+				</a>
+			  </div>
+			</nav>
+		</footer>
+	</div>		
+</body>
+</html>		

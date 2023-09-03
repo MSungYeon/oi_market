@@ -1,0 +1,306 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <title>대화방</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" 
+		integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" 
+		crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css" />
+  	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+    integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz"
+    crossorigin="anonymous">
+    
+    <link th:href="@{/css/atag.css}" rel="stylesheet"> <!-- a태그관련 스타일 -->
+    <link th:href="@{/css/navbar.css}" rel="stylesheet"> <!-- navbar 스타일 -->
+    
+    <style>
+[v-cloak] {
+	display: none;
+}
+
+#app {
+	flex: 1;
+}
+
+.button-hover-effect {
+	/* Add any other styles you want here */
+	border: none;
+	transform: scale(1); /* Initial scale, no scaling */
+	transition: transform 0.3s ease; /* Add a smooth transition effect */
+}
+
+.button-hover-effect:hover {
+	transform: scale(1.02); /* Increase the scale on hover */
+}
+</style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="javascript:history.go(-1)"><i class="fas fa-chevron-left"></i></a>
+            <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getBoardList}" id="home">
+                <i class="fas fa-comments"></i>
+            </a>
+            <h5 class="m-0 navbar-brand"><font>채팅방</font></h5>
+            <ul class="navbar-nav ms-auto mb-lg-0">
+                <li class="nav-item mx-3">
+                </li>
+            </ul>
+        </div>
+    </nav>
+<div class="container mt-3 pt-3" id="app" v-cloak>
+<!-- 채팅방 목록 표시 -->
+	<div class="input-group mt-3 pt-3">
+		<div class="input-group-prepend" style="width: 100%;">
+		  <button class="list-group-item list-group-item-action d-flex align-items-start align-items-stretch button-hover-effect" v-for="item in chatrooms" v-bind:key="item.room_id" v-on:click="enterRoom(item.room_id, item.member1_id, item.member2_id)" v-on:contextmenu.prevent="showContextMenu($event, item.room_id)" v-if="isMemberInRoom(item)" :style="{ fontWeight: isUnread(item) ? 'bold' : 'normal', color: isUnread(item) ? 'black' : 'gray' }">
+		    <div v-if="isMemberInRoomName1(item)">
+		      <img :src="'/image/' + item.member1_profile" alt="사진" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
+		    </div>
+		    <div v-if="isMemberInRoomName2(item)">
+		      <img :src="'/image/' + item.member2_profile" alt="사진" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;">
+		    </div>
+		
+		    <div class="d-flex flex-column justify-content-between">
+		      <div>
+		        <span v-if="isMemberInRoomName1(item)" style="font-size: 18px; font-weight: bold;">
+		          {{ item.member1_nickname }}
+		        </span>
+		        <span v-if="isMemberInRoomName2(item)" style="font-size: 18px; font-weight: bold;">
+		          {{ item.member2_nickname }}
+		        </span>
+		        <span style="font-size: 8px; color: lightgray;">
+		          {{ getFormattedDateTime(item.recentMessageCreateDate) }}
+		        </span>
+		      </div>
+		      <div>
+		        <span v-if="item.recentMessage" :style="{ fontSize: '12px', color: isUnread(item) ? 'black' : 'gray', fontWeight: isUnread(item) ? 'bold' : 'normal' }">{{ item.recentMessage.message }}</span>
+		
+		        <span v-else style="font-size: 12px; color: gray;">메시지 내용이 없습니다.</span>
+		      </div>
+		    </div>
+		  </button>
+		</div>
+	</div>
+
+	<div class="input-group-append align-items-stretch">
+	  <div v-show="contextMenu.visible" :style="{ top: contextMenu.top + 'px', left: contextMenu.left + 'px', position: 'absolute', zIndex: 1 }">
+	    <ul class="list-group">
+	      <li class="list-group-item" v-on:click="confirmDeleteRoom(contextMenu.roomId)" style="cursor: pointer;">
+	        <span>채팅방 삭제</span>
+	      </li>
+	    </ul>
+	  </div>
+	</div>
+</div>
+
+    <footer>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
+            <div class="container">
+                <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getBoardList}" id="home">
+                    <i class="fas fa-home"></i>
+                    <span>홈</span>
+                </a>
+                <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getfBoardList}" id="fboard">
+                    <i class="fas fa-list-alt"></i>
+                    <span>게시판</span>
+                </a>
+                <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/myGps}" id="gpspage">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>내 위치</span>
+                </a>
+                <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{#}" id="chat">
+                    <i class="fas fa-comments" style="color: green;"></i>
+                    <span>채팅</span>
+                </a>
+                <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/myPage}" id="mypage">
+                    <i class="fas fa-user"></i>
+                    <span>나의 오이</span>
+                </a>
+            </div>
+        </nav>
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script src="/webjars/vue/2.5.16/dist/vue.min.js"></script>
+    <script src="/webjars/axios/0.17.1/dist/axios.min.js"></script>
+    <script th:inline="javascript">
+    var member = /*[[${session.member}]]*/ null;
+    var memberId = member ? member.id : '';
+
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            room_id: '',
+            roomName: '채팅방',
+            member1_id: memberId,
+            member2_id: '', // 초기값은 비워둠
+            chatrooms: [],
+            contextMenu: {
+                visible: false,
+                top: 0,
+                left: 0,
+                roomId: ''
+              }
+        },
+        created() {
+            this.findAllRoom();
+            this.addClickOutsideEventListener();
+            // 일정 간격마다 findAllRoom 메서드 호출 (예: 5초마다) 새로고침
+            setInterval(this.findAllRoom, 5000);
+        },
+        methods: {
+            findAllRoom: function() {
+                axios.get('/chat/rooms').then(response => {
+                    this.chatrooms = response.data.map(room => {
+                        return {
+                            room_id: room.room_id,
+                            roomName: room.roomName,
+                            member1_id: room.member1.id,
+                            member2_id: room.member2.id,
+                            member1_nickname: room.member1.nickname, 
+                            member2_nickname: room.member2.nickname,
+                            member1_profile: room.member1.profile,
+                            member2_profile: room.member2.profile,
+                            recentMessage: room.recentMessage || null, // 최근 메시지 추가
+                            recentMessageCreateDate: new Date(room.recentMessageCreateDate) // 생성 일자 추가
+                            
+                        };
+                    });
+                    // 채팅방을 recentMessageCreateDate가 제일 최근인 순서로 정렬
+                    this.chatrooms.sort((a, b) => {
+                        return b.recentMessageCreateDate - a.recentMessageCreateDate;
+                    });
+                }).catch(error => {
+                    console.error(error);
+                });
+            },
+            isUnread: function(room) {
+                const memberId = /*[[${session.member.id}]]*/ '';
+                if (memberId === room.member1_id) {
+                    return room.recentMessage && !room.recentMessage.member1Read;
+                } else if (memberId === room.member2_id) {
+                    return room.recentMessage && !room.recentMessage.member2Read;
+                }
+                return false;
+            }
+,
+            createRoom: function() {
+                if ("" === this.roomName) {
+                    alert("새로 고침 후 다시 이용해주세요.");
+                    return;
+                } else if ("" === this.member2_id) { // member2_id가 비어 있는 경우
+                    alert("새로 고침 후 다시 이용해주세요.");
+                    return;
+                } else {
+                    var params = new URLSearchParams();
+                    params.append("id", this.room_id);
+                    params.append("name", this.roomName);
+                    params.append("member1_id", this.member1_id);
+                    params.append("member2_id", this.member2_id);
+                    axios.post('/chat/room', {
+                        room_id: this.room_id,
+                        roomName: this.roomName,
+                        member1: { id: this.member1_id },
+                        member2: { id: this.member2_id }
+                    }).then(response => {
+                        // 채팅방 생성 성공
+                        var roomId = response.data.room_id;
+                        this.enterRoom(roomId, this.member1_id, this.member2_id);
+                    })
+                        .catch(response => { alert("회원을 찾을 수 없습니다."); });
+                }
+            }, 
+            enterRoom: function(room_id, member1_id, member2_id) {
+                var sender = memberId;
+                var receiver = this.member1_id === member1_id ? member2_id : member1_id; // receiver 값을 저장
+                if (sender !== null && sender.trim() !== "") {
+                    localStorage.setItem('wschat.sender', sender);
+                    localStorage.setItem('wschat.roomId', room_id);
+                    localStorage.setItem('wschat.member1Id', member1_id);
+                    localStorage.setItem('wschat.member2Id', member2_id);
+                    localStorage.setItem('wschat.receiver', receiver); // receiver 값을 저장
+                    location.href = "/chat/room/enter/" + room_id;
+                }
+            }
+,
+
+            deleteRoom: function(room_id) {
+                axios.delete('/chat/room/' + room_id)
+                    .then(response => {
+                        alert("채팅방을 삭제하였습니다.");
+                        this.findAllRoom();
+                    })
+                    .catch(error => {
+                        alert("채팅방 삭제에 실패하였습니다.");
+                    });
+                this.contextMenu.visible = false;
+            },
+            confirmDeleteRoom: function(roomId) {
+                if (confirm('정말 삭제하시겠습니까?')) {
+                  this.deleteRoom(roomId);
+                }
+              },
+              addClickOutsideEventListener: function() {
+                  window.addEventListener('click', (event) => {
+                    if (!event.target.closest('.list-group-item')) {
+                      this.contextMenu.visible = false;
+                    }
+                  });
+                },
+            
+            isMemberInRoom: function(room) { 
+                const memberId = /*[[${session.member.id}]]*/ '';
+                return room.member1_id === memberId || room.member2_id === memberId;
+            },
+            
+            // 채팅목록에서 채팅방 이름
+            isMemberInRoomName1: function(room) {
+                const memberId = /*[[${session.member.id}]]*/ '';
+                return room.member1_id !== memberId;
+            },
+            isMemberInRoomName2: function(room) {
+                const memberId = /*[[${session.member.id}]]*/ '';
+                return room.member2_id !== memberId;
+            },
+            
+            // 날짜/시간 형식 변환 함수
+            getFormattedDateTime: function(dateString) {
+                const today = new Date();
+                const messageDate = new Date(dateString);
+                
+                if (
+                    today.getDate() === messageDate.getDate() &&
+                    today.getMonth() === messageDate.getMonth() &&
+                    today.getFullYear() === messageDate.getFullYear()
+                ) {
+                    // 날짜가 오늘일 경우 시간만 표시
+                    return messageDate.toLocaleString('ko-KR', { hour: 'numeric', minute: 'numeric' });
+                } else {
+                    // 날짜가 오늘이 아닐 경우 날짜만 표시
+                    return messageDate.toLocaleString('ko-KR', { year: 'numeric', month: 'numeric', day: 'numeric' });
+                }
+            },
+            showContextMenu: function(event, roomId) {
+                event.preventDefault();
+                this.contextMenu.visible = true;
+                this.contextMenu.top = event.pageY;
+                this.contextMenu.left = event.pageX;
+                this.contextMenu.roomId = roomId;
+              }
+
+
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+@charset "UTF-8";
+  
+    .container {
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 0 auto;
+  }
+
+ 
+    .image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 5px;
+  }
+
+  .image-grid img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+  }

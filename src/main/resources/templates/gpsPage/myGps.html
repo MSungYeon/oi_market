@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>오이마켓 🥒</title>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>	
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" 
+		integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" 
+		crossorigin="anonymous">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<link th:href="@{/css/atag.css}" rel="stylesheet"> <!-- a태그관련 스타일 -->
+	<script type="text/javascript"
+		src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9f576d967e2c099825ce8d4ce037ecdf"></script>
+
+</head>
+<body>
+	<nav class="navbar navbar-dark bg-dark fixed-top">
+		<div class="container">
+			<a class="navbar-brand" href="#" id="logo">오이마켓 🥒</a>
+			<h5 class="m-0 navbar-brand me-auto">
+				<font
+					th:text="${#strings.length(session['member'].addr2) &gt; 6 ? #strings.substring(session['member'].addr2, 0, 6) + '...' : session['member'].addr2}"></font>
+				<i class="fas fa-map-marker-alt text-danger"></i>
+			</h5>
+		</div>
+	</nav>
+
+    <div class="container pt-5 mt-5" align="center">
+        <div id="map" style="width: 100%; height: 700px;"></div>
+    </div>
+
+
+    <script type="text/javascript">
+        var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+        var options = { //지도를 생성할 때 필요한 기본 옵션
+            center : new kakao.maps.LatLng(33.450701, 126.570667), //지도의 초기 중심좌표.
+            level : 3 //지도의 초기 레벨(확대, 축소 정도)
+        };
+
+        var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+
+        // 현재 위치를 지도에 표시하는 함수
+        function showCurrentLocation(position) {
+            var lat = position.coords.latitude; // 위도
+            var lng = position.coords.longitude; // 경도
+
+            var markerPosition = new kakao.maps.LatLng(lat, lng); // 마커가 표시될 위치
+
+            // 마커를 생성합니다
+            var marker = new kakao.maps.Marker({
+                position: markerPosition
+            });
+
+            // 마커가 지도 위에 표시되도록 설정합니다
+            marker.setMap(map);
+
+            // 지도 중심을 마커 위치로 변경합니다
+            map.setCenter(markerPosition);
+        }
+
+        // Geolocation API를 사용하여 사용자의 현재 위치를 가져옵니다
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showCurrentLocation);
+        } else {
+            console.log("Geolocation is not supported by this browser.");
+        }
+    </script>
+
+	<footer>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
+            <div class="container">
+                <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getBoardList}" id="home">
+                    <i class="fas fa-home"></i>
+                    <span>홈</span>
+                </a>
+                <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getfBoardList}" id="fboard">
+                    <i class="fas fa-list-alt"></i>
+                    <span>게시판</span>
+                </a>
+                <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{#}" id="gpspage">
+                    <i class="fas fa-map-marker-alt"  style="color: green;"></i>
+                    <span>내 위치</span>
+                </a>
+                <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/chat/room}" id="chat">
+                    <i class="fas fa-comments"></i>
+                    <span>채팅</span>
+                </a>
+                <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/myPage}" id="mypage">
+                    <i class="fas fa-user"></i>
+                    <span>나의 오이</span>
+                </a>
+            </div>
+			</nav>
+		</footer>
+		
+</body>
+</html>		

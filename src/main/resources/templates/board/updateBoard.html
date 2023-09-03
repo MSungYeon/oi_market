@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>오이마켓 🥒</title>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>	
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" 
+		integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" 
+		crossorigin="anonymous">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<link th:href="@{/css/atag.css}" rel="stylesheet"> <!-- a태그관련 스타일 -->
+	
+	<script>
+        function handleFileUpload(event) {
+            var previewContainer = document.getElementById('preview-container');
+            var previewText = document.getElementById('preview-text');
+            var fileList = event.target.files;
+
+            if (fileList.length > 0) {
+                // 파일이 선택된 경우 미리보기 컨테이너를 표시하고, 텍스트를 숨깁니다.
+                previewContainer.style.display = 'block';
+                previewText.style.display = 'none';
+
+                // 미리보기 이미지를 생성하여 컨테이너에 추가합니다.
+                for (var i = 0; i < fileList.length; i++) {
+                    var file = fileList[i];
+                    var reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        var image = document.createElement('img');
+                        image.src = event.target.result;
+                        image.style.maxWidth = '100px';
+                        image.style.maxHeight = '100px';
+                        previewContainer.appendChild(image);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                // 파일이 선택되지 않은 경우 미리보기 컨테이너를 숨기고, 텍스트를 표시합니다.
+                previewContainer.style.display = 'none';
+                previewText.style.display = 'block';
+            }
+        }
+    </script>
+</head>
+<body>
+	<div class="container" align="center">
+		<nav class="navbar navbar-dark bg-dark fixed-top" id="navbar">
+		  <div class="container">
+		    <a class="navbar-brand" href="javascript:history.go(-1)"><i class="fas fa-chevron-left"></i></a>
+		    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getBoardList}" id="home">
+		      <i class="fas fa-home"></i>
+		    </a>
+		    <ul class="navbar-nav ms-auto mb-lg-0">
+		      <li class="nav-item mx-3">
+		
+		      </li>
+		    </ul>
+		  </div>
+		</nav>
+	
+	<div class="container mt-5 mb-5 pb-5 justify-content-center">
+		<form th:action="@{/updateBoard}"  method="post" enctype="multipart/form-data">
+			<input name="seq" type="hidden" th:value="${board.seq}">		
+			<div class="modal-content">		
+		
+				<div class="modal-header bg-success text-white" >
+					<h1 class="motal-title fs-5" id="staticBackdropLabel">상품수정하기</h1>
+				</div>
+				
+				<div class="modal-body">
+				                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="uploadFiles"><i class="fas fa-file"></i></label>
+                        <input type="file" class="form-control" name="upload" id="uploadFiles"
+                               aria-describedby="uploadFiles" aria-label="Upload" multiple onchange="handleFileUpload(event)">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-text"><i class="fas fa-paperclip"></i></div>
+                        <div class="form-control" readonly>
+                            <ul style="list-style: none; padding: 0;">
+                                <li th:each="fileName : ${board.uploadFiles}">
+                                    <img th:src="@{'/image/' + ${fileName}}" th:alt="${fileName}"
+                                         style="max-width: 100px; max-height: 100px;">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+					<div class="input-group mb-3">
+						<div class="input-group-text"><i class="fas fa-pen"></i></div>
+						<input type="text" name="title" class="form-control" id="title" th:value="${board.title}" required placeholder="제품명">
+					</div>
+
+					<div class="input-group mb-3">
+						<div class="input-group-text"><i class="fas fa-won-sign"></i></div>
+						<input type="number" name="price" class="form-control" id="price" th:value="${board.price}" required placeholder="₩가격">
+					</div>
+					
+					<div class="input-group mb-3">
+					  <span class="input-group-text"><i class="fas fa-clipboard"></i></span>
+					  <textarea class="form-control" th:text="${board.content}"  name="content" rows="10" placeholder="제품 설명"></textarea>
+					</div>
+					
+					<div class="input-group mb-3">
+					  <div class="input-group-text"><i class="fas fa-list"></i></div>
+					  <select name="cate" class="form-select" id="cate" required >
+						<option value="">카테고리 선택</option>
+						<option value="디지털기기" th:selected="${board.cate == '디지털기기'}">📱 디지털기기</option>
+						<option value="생활가전" th:selected="${board.cate == '생활가전'}">📺 생활가전</option>
+						<option value="가구" th:selected="${board.cate == '가구'}">🏠 가구</option>
+						<option value="의류" th:selected="${board.cate == '의류'}">👔 의류</option>
+						<option value="미용" th:selected="${board.cate == '미용'}">✂ 미용</option>
+						<option value="스포츠" th:selected="${board.cate == '스포츠'}">⚽ 스포츠</option>
+					  </select>
+					</div>
+					
+					<div class="input-group mb-3">
+					  <div class="input-group-text"><i class="fas fa-globe"></i></div>
+					  <input type="text" name="addr" class="form-control" id="addr" th:value="${board.addr}" readonly placeholder="거래지역">
+					</div>				
+				</div> 
+				
+				<div class="modal-footer">
+				    <input type="submit" class="btn btn-success" onclick="return confirm('상품을 수정하시겠습니까?')" value=" 수정하기 " />
+				    <a th:href="@{/getBoardList}" class="btn btn-success">판매목록가기</a>					
+				</div> 
+			</div> 
+		</form>
+	</div>	
+		<footer>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
+			  <div class="container">
+			    <a class="navbar-brand d-flex flex-column align-items-center" href="#" id="home">
+				  <i class="fas fa-home" style="color: green;"></i>
+				  <span>홈</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/getfBoardList}" id="fboard">
+				  <i class="fas fa-list-alt"></i>
+				  <span>게시판</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{#}" id="gpspage">
+				  <i class="fas fa-map-marker-alt"></i>
+				  <span>내 위치</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/chat/room}" id="chat">
+				  <i class="fas fa-comments"></i>
+				  <span>채팅</span>
+				</a>
+			    <a class="navbar-brand d-flex flex-column align-items-center" th:href="@{/myPage}" id="mypage">
+				  <i class="fas fa-user"></i>
+				  <span>나의 오이</span>
+				</a>
+			  </div>
+			</nav>
+		</footer>
+	</div>		
+</body>
+</html>		
